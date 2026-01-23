@@ -60,7 +60,15 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.wideSection {
   margin-bottom: 3rem;
+}
+
+.section {
+  height: 100%;
 }
 
 .infoCard {

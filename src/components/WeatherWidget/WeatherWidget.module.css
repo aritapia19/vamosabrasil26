@@ -1,0 +1,143 @@
+.container {
+    background: linear-gradient(135deg, #0066cc, #004d99);
+    color: white;
+    border-radius: 20px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.titleGroup {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.icon {
+    color: var(--secondary-yellow);
+}
+
+.title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1;
+}
+
+.subtitle {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin: 0.25rem 0 0 0;
+}
+
+.refreshBtn {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.refreshBtn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.refreshIcon {
+    width: 18px;
+    height: 18px;
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.loading {
+    text-align: center;
+    padding: 2rem;
+    opacity: 0.7;
+}
+
+.weatherBody {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.mainInfo {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.weatherIcon {
+    width: 64px;
+    height: 64px;
+}
+
+.tempGroup {
+    flex: 1;
+}
+
+.temperature {
+    font-size: 3rem;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--secondary-yellow);
+}
+
+.condition {
+    font-size: 0.95rem;
+    opacity: 0.9;
+    margin-top: 0.25rem;
+}
+
+.details {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+}
+
+.detailItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem;
+    border-radius: 8px;
+}
+
+.fallbackNote {
+    margin-top: 1rem;
+    font-size: 0.75rem;
+    opacity: 0.6;
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .details {
+        grid-template-columns: 1fr;
+    }
+
+    .temperature {
+        font-size: 2.5rem;
+    }
+}

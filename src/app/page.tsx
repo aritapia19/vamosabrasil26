@@ -2,6 +2,8 @@ import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
 import Countdown from '@/components/Countdown/Countdown';
 import CurrencyConverter from '@/components/CurrencyConverter/CurrencyConverter';
+import WeatherWidget from '@/components/WeatherWidget/WeatherWidget';
+import FlightManager from '@/components/FlightManager/FlightManager';
 import { LogOut, User } from 'lucide-react';
 import styles from './page.module.css';
 
@@ -52,16 +54,12 @@ export default async function Home() {
           </section>
 
           <section className={styles.section}>
-            <div className={styles.infoCard}>
-              <h3>Información Útil</h3>
-              <ul>
-                <li><strong>Sede:</strong> Brasil</li>
-                <li><strong>Fecha Inicio:</strong> 8 de Junio, 2026</li>
-                <li><strong>Estadios:</strong> Maracaná, Mineirão, etc.</li>
-                <li><strong>Consejo:</strong> ¡Ahorra en Reales desde ahora!</li>
-              </ul>
-            </div>
+            <WeatherWidget />
           </section>
+        </div>
+
+        <div className={styles.wideSection}>
+          <FlightManager />
         </div>
       </div>
 

@@ -16,6 +16,7 @@ model User {
   createdAt      DateTime        @default(now())
   updatedAt      DateTime        @updatedAt
   recoveryTokens RecoveryToken[]
+  flightBookings FlightBooking[]
 }
 
 model RecoveryToken {
@@ -25,4 +26,23 @@ model RecoveryToken {
   userId    String
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+}
+
+model FlightBooking {
+  id            String    @id @default(cuid())
+  userId        String
+  user          User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  pnrCode       String    @unique
+  airline       String    @default("Gol")
+  flightNumber  String?
+  origin        String
+  destination   String
+  departureDate DateTime
+  departureTime String?
+  returnDate    DateTime?
+  returnTime    String?
+  passengers    Int       @default(1)
+  status        String    @default("confirmed") // confirmed, cancelled, pending
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
