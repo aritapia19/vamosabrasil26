@@ -1,0 +1,11 @@
+.authWrapper {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    background-color: var(--gray-50);
+    background-image: radial-gradient(var(--secondary-yellow) 0.5px, transparent 0.5px);
+    background-size: 20px 20px;
+    background-attachment: fixed;
+}

@@ -1,66 +1,73 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
+import Countdown from '@/components/Countdown/Countdown';
+import CurrencyConverter from '@/components/CurrencyConverter/CurrencyConverter';
+import { LogOut, User } from 'lucide-react';
+import styles from './page.module.css';
 
-export default function Home() {
+export default async function Home() {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('token');
+
+  if (!token) {
+    redirect('/login');
+  }
+
+  // En una app real, aquí verificaríamos el token y obtendríamos el usuario
+  // Para la demo, asumimos que si hay token, el usuario está "logeado"
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className={styles.main}>
+      <header className={styles.header}>
+        <div className="container">
+          <div className={styles.nav}>
+            <h1 className={styles.logo}>Brasil 2026</h1>
+            <div className={styles.userMenu}>
+              <div className={styles.userInfo}>
+                <User size={20} />
+                <span>Mi Perfil</span>
+              </div>
+              <form action={async () => {
+                'use server';
+                const { cookies } = await import('next/headers');
+                (await cookies()).delete('token');
+              }}>
+                <button type="submit" className={styles.logoutBtn}>
+                  <LogOut size={20} />
+                </button>
+              </form>
+            </div>
+          </div>
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      <div className="container">
+        <div className={styles.heroSection}>
+          <Countdown />
         </div>
-      </main>
-    </div>
+
+        <div className={styles.grid}>
+          <section className={styles.section}>
+            <CurrencyConverter />
+          </section>
+
+          <section className={styles.section}>
+            <div className={styles.infoCard}>
+              <h3>Información Útil</h3>
+              <ul>
+                <li><strong>Sede:</strong> Brasil</li>
+                <li><strong>Fecha Inicio:</strong> 8 de Junio, 2026</li>
+                <li><strong>Estadios:</strong> Maracaná, Mineirão, etc.</li>
+                <li><strong>Consejo:</strong> ¡Ahorra en Reales desde ahora!</li>
+              </ul>
+            </div>
+          </section>
+        </div>
+      </div>
+
+      <footer className={styles.footer}>
+        <p>© 2026 Vamos a Brasil - Hecho con ❤️ para la aventura</p>
+      </footer>
+    </main>
   );
 }
