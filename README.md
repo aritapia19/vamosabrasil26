@@ -1,36 +1,60 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Vamos a Brasil 2026 - Web App
 
-## Getting Started
+Aplicación web responsive para seguir el camino al Mundial 2026, con autenticación de usuarios, contador regresivo en tiempo real y conversor de moneda (BRL a ARS).
 
-First, run the development server:
+## 🚀 Tecnologías Utilizadas
+- **Frontend/Backend**: Next.js 14+ (App Router, TypeScript)
+- **Base de Datos**: Prisma ORM con PostgreSQL (Supabase)
+- **Autenticación**: JWT (JSON Web Tokens) con Cookies HttpOnly
+- **Estilos**: Vanilla CSS (CSS Modules) - Paleta Verde y Amarilla
+- **Iconos**: Lucide React
+- **Manejo de Fechas**: Date-fns
 
+## 🛠️ Configuración Local
+
+### 1. Requisitos
+- Node.js 18.x o superior
+- Una cuenta en [Supabase](https://supabase.com)
+
+### 2. Instalación
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/aritapia19/vamosabrasil26.git
+cd vamosabrasil26
+npm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 3. Variables de Entorno
+Crea un archivo `.env` en la raíz del proyecto basado en `.env.example`:
+```env
+DATABASE_URL="postgresql://postgres:[PASSWORD]@db.epvrtjsakkzucqssxjow.supabase.co:6543/postgres?pgbouncer=true"
+DIRECT_URL="postgresql://postgres:[PASSWORD]@db.epvrtjsakkzucqssxjow.supabase.co:5432/postgres"
+JWT_SECRET="tu_secreto_seguro"
+```
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 4. Base de Datos
+Ejecuta las migraciones iniciales para crear las tablas en Supabase:
+```bash
+npx prisma db push
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 5. Ejecución
+```bash
+npm run dev
+```
+La aplicación estará disponible en `http://localhost:3000`.
 
-## Learn More
+## 🌐 Despliegue en Vercel
+1. Conecta tu repositorio de GitHub en el dashboard de Vercel.
+2. Agrega la variable de entorno `DATABASE_URL` y `JWT_SECRET`.
+3. Vercel detectará automáticamente Next.js y realizará el despliegue.
 
-To learn more about Next.js, take a look at the following resources:
+## 📝 Decisiones Técnicas
+- **Next.js**: Elegido por su capacidad de manejar tanto el frontend como el backend (API Routes) en un solo proyecto, facilitando el despliegue y la consistencia del código.
+- **Supabase (PostgreSQL)**: Proporciona una base de datos relacional robusta ideal para manejar usuarios y escalabilidad futura.
+- **JWT + Cookies**: Un enfoque de seguridad estándar para mantener sesiones de forma segura y evitar ataques CSRF básicos mediante el uso de cookies HttpOnly.
+- **Vanilla CSS**: Se evitó Tailwind para demostrar control absoluto sobre el diseño, logrando una interfaz única y temática (verde/amarilla).
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ✨ Funcionalidades
+1. **Auth Completo**: Registro con hasheo de contraseñas (bcrypt), login con sesiones seguras y flujo de recuperación simulado.
+2. **Contador Dinámico**: Actualización en tiempo real (segundo a segundo) hasta el 8 de abril de 2026.
+3. **Conversor Pro**: Consumo de API externa con manejo de errores, caché y actualización manual de cotización.
