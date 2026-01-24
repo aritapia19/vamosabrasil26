@@ -1,7 +1,7 @@
 'use client';
 
-import { cookies } from 'next/headers';
 import { LogOut } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 import Countdown from '@/components/Countdown/Countdown';
 import { verifyToken } from '@/lib/jwt';
 import { useCarousel } from '@/context/CarouselContext';
@@ -9,6 +9,7 @@ import styles from './Header.module.css';
 import { useEffect, useState } from 'react';
 
 export default function Header() {
+    const router = useRouter();
     const { currentImage, imageBrightness } = useCarousel();
     const [userName, setUserName] = useState('Usuario');
     const [hasToken, setHasToken] = useState(false);
@@ -31,6 +32,17 @@ export default function Header() {
         }
     }, []);
 
+    const handleLogout = async () => {
+        try {
+            await fetch('/api/auth/logout', {
+                method: 'POST',
+            });
+            router.push('/login');
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error);
+        }
+    };
+
     return (
         <header
             className={`${styles.header} ${imageBrightness === 'light' ? styles.lightBg : styles.darkBg}`}
@@ -52,15 +64,13 @@ export default function Header() {
                         <div className={styles.userInfo}>
                             <span>Hola {userName}</span>
                         </div>
-                        <form action={async () => {
-                            'use server';
-                            const { cookies } = await import('next/headers');
-                            (await cookies()).delete('token');
-                        }}>
-                            <button type="submit" className={styles.logoutBtn} aria-label="Cerrar sesión">
-                                <LogOut size={20} />
-                            </button>
-                        </form>
+                        <button
+                            onClick={handleLogout}
+                            className={styles.logoutBtn}
+                            aria-label="Cerrar sesión"
+                        >
+                            <LogOut size={20} />
+                        </button>
                     </div>
                 )}
             </div>
