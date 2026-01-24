@@ -4,7 +4,8 @@ import Countdown from '@/components/Countdown/Countdown';
 import CurrencyConverter from '@/components/CurrencyConverter/CurrencyConverter';
 import WeatherWidget from '@/components/WeatherWidget/WeatherWidget';
 import FlightManager from '@/components/FlightManager/FlightManager';
-import { LogOut, User } from 'lucide-react';
+import Carousel from '@/components/Carousel/Carousel';
+import Header from '@/components/Header/Header';
 import styles from './page.module.css';
 
 export default async function Home() {
@@ -20,33 +21,19 @@ export default async function Home() {
 
   return (
     <main className={styles.main}>
-      <header className={styles.header}>
-        <div className="container">
-          <div className={styles.nav}>
-            <h1 className={styles.logo}>Brasil 2026</h1>
-            <div className={styles.userMenu}>
-              <div className={styles.userInfo}>
-                <User size={20} />
-                <span>Mi Perfil</span>
-              </div>
-              <form action={async () => {
-                'use server';
-                const { cookies } = await import('next/headers');
-                (await cookies()).delete('token');
-              }}>
-                <button type="submit" className={styles.logoutBtn}>
-                  <LogOut size={20} />
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
+
+      <div className={styles.carouselSection}>
+        <Carousel />
+      </div>
 
       <div className="container">
-        <div className={styles.heroSection}>
-          <Countdown />
-        </div>
+        {/* El Countdown viejo estaba aquí, ahora está en el Header. 
+            Podemos dejarlo aquí también si se quiere grande, pero la solicitud 
+            decía "que el contador esté como top bar". Lo comentaré o eliminaré 
+            de aquí para evitar duplicidad visual excesiva, o dejaré solo el Header.
+            Decisión: Eliminar de aquí ya que está en el Header.
+        */}
 
         <div className={styles.grid}>
           <section className={styles.section}>

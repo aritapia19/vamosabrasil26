@@ -1,0 +1,110 @@
+.carouselContainer {
+    width: 100%;
+    height: 600px; /* Ajustable según necesidad */
+    position: relative;
+    overflow: hidden;
+    background-color: #000;
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
+    display: flex;
+    align-items: flex-end; /* Texto abajo */
+}
+
+.slide.active {
+    opacity: 1;
+    z-index: 1;
+}
+
+.image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -1;
+}
+
+.overlay {
+    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    width: 100%;
+    padding: 3rem 2rem;
+    color: white;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.title {
+    font-size: 3rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+    line-height: 1;
+}
+
+.description {
+    font-size: 1.2rem;
+    max-width: 600px;
+    color: #e0e0e0;
+}
+
+.controls {
+    position: absolute;
+    bottom: 2rem;
+    right: 2rem;
+    display: flex;
+    gap: 1rem;
+    z-index: 10;
+}
+
+.controlBtn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.controlBtn:hover {
+    background: white;
+    color: black;
+}
+
+.indicators {
+    position: absolute;
+    bottom: 1rem;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 0.5rem;
+    z-index: 10;
+}
+
+.indicator {
+    width: 30px;
+    height: 4px;
+    background: rgba(255,255,255,0.3);
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.indicator.active {
+    background: white;
+}

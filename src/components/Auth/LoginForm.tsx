@@ -46,8 +46,8 @@ export default function LoginForm() {
                 <div className={styles.iconCircle}>
                     <LogIn className={styles.icon} />
                 </div>
-                <h2>Bienvenido de nuevo</h2>
-                <p>Ingresa tus credenciales para continuar</p>
+                <h2>VAMOS A BRASIL</h2>
+                {/* Texto eliminado por solicitud */}
             </div>
 
             <form onSubmit={handleSubmit} className={styles.form}>
