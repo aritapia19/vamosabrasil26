@@ -9,49 +9,49 @@ const slides = [
     {
         id: 1,
         image: '/images/carousel/01_gol.jpg',
-        title: '01 GOL',
+        title: 'GOL',
         description: 'Vuela con comodidad y seguridad en nuestra aerolínea asociada para comenzar tu aventura.'
     },
     {
         id: 2,
         image: '/images/carousel/02_traslado.jpg',
-        title: '02 Traslado',
+        title: 'Traslado',
         description: 'Servicio exclusivo de InBuzios para llevarte directo a tu descanso sin preocupaciones.'
     },
     {
         id: 3,
         image: '/images/carousel/03_pousada.jpg',
-        title: '03 Pousada Villegagnon',
+        title: 'Pousada Villegagnon',
         description: 'Tu hogar lejos de casa. Confort, ubicación ideal y la mejor atención en Búzios.'
     },
     {
         id: 4,
         image: '/images/carousel/04_playa.jpg',
-        title: '04 Playas',
+        title: 'Playas',
         description: 'Descubre las playas paradisíacas de arena blanca y aguas cristalinas de Búzios.'
     },
     {
         id: 5,
         image: '/images/carousel/05_barco.jpg',
-        title: '05 Barco',
+        title: 'Barco',
         description: 'Excursiones inolvidables navegando por la costa y conociendo las mejores vistas.'
     },
     {
         id: 6,
         image: '/images/carousel/06_noche.jpg',
-        title: '06 Noche en Búzios',
+        title: 'Noche en Búzios',
         description: 'Vive la magia de Rua das Pedras, gastronomía, música y diversión nocturna.'
     },
     {
         id: 7,
-        image: '/images/carousel/07_cabofrio.jpg',
-        title: '07 Arraial do Cabo',
+        image: '/images/carousel/07_cabofrio.JPG',
+        title: 'Arraial do Cabo',
         description: 'Una escapada imprescindible al "Caribe Brasileño", naturaleza en estado puro.'
     },
     {
         id: 8,
         image: '/images/carousel/08_rio.jpg',
-        title: '08 Rio de Janeiro',
+        title: 'Rio de Janeiro',
         description: 'La Ciudad Maravillosa te espera con sus iconos mundiales y energía única.'
     }
 ];

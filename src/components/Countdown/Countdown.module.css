@@ -62,3 +62,48 @@
         font-size: 2rem;
     }
 }
+
+/* Modo Compacto (Header) */
+.containerCompact {
+    padding: 0;
+    background: transparent;
+    box-shadow: none;
+    color: white;
+}
+
+.gridCompact {
+    display: flex;
+    gap: 1rem;
+    /* Reducido un poco para asegurar espacio */
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    /* Evita saltos de línea */
+}
+
+.itemCompact {
+    display: flex;
+    flex-direction: row;
+    /* Cambiado a row para que ocupe menos verticalmente y se vea más "en una línea" */
+    align-items: baseline;
+    gap: 4px;
+    background: transparent;
+    padding: 0;
+    border: none;
+    backdrop-filter: none;
+    flex-shrink: 0;
+}
+
+.valueCompact {
+    font-size: 1.1rem;
+    font-weight: 700;
+    line-height: 1;
+    color: white;
+}
+
+.labelCompact {
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    opacity: 0.8;
+    font-weight: 600;
+}
