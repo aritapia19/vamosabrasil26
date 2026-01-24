@@ -1,24 +1,44 @@
+'use client';
+
 import { cookies } from 'next/headers';
 import { LogOut } from 'lucide-react';
 import Countdown from '@/components/Countdown/Countdown';
 import { verifyToken } from '@/lib/jwt';
+import { useCarousel } from '@/context/CarouselContext';
 import styles from './Header.module.css';
+import { useEffect, useState } from 'react';
 
-export default async function Header() {
-    const cookieStore = await cookies();
-    const token = cookieStore.get('token');
+export default function Header() {
+    const { currentImage, imageBrightness } = useCarousel();
+    const [userName, setUserName] = useState('Usuario');
+    const [hasToken, setHasToken] = useState(false);
 
-    let userName = 'Usuario';
+    useEffect(() => {
+        // Get token on client side
+        const getCookie = (name: string) => {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop()?.split(';').shift();
+        };
 
-    if (token) {
-        const decoded = verifyToken(token.value);
-        if (decoded && typeof decoded === 'object' && 'name' in decoded) {
-            userName = (decoded.name as string) || 'Usuario';
+        const token = getCookie('token');
+        if (token) {
+            setHasToken(true);
+            const decoded = verifyToken(token);
+            if (decoded && typeof decoded === 'object' && 'name' in decoded) {
+                setUserName((decoded.name as string) || 'Usuario');
+            }
         }
-    }
+    }, []);
 
     return (
-        <header className={styles.header}>
+        <header
+            className={`${styles.header} ${imageBrightness === 'light' ? styles.lightBg : styles.darkBg}`}
+            style={{
+                backgroundImage: `url(${currentImage})`,
+            }}
+        >
+            <div className={styles.headerBackdrop} />
             <div className={styles.nav}>
                 <div className={styles.left}>
                     <h1 className={styles.logo}>BUZIOS</h1>
@@ -27,7 +47,7 @@ export default async function Header() {
                     </div>
                 </div>
 
-                {token && (
+                {hasToken && (
                     <div className={styles.userMenu}>
                         <div className={styles.userInfo}>
                             <span>Hola {userName}</span>

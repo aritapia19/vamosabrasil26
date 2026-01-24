@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useCarousel } from '@/context/CarouselContext';
 import styles from './Carousel.module.css';
 
 const slides = [
@@ -57,16 +58,18 @@ const slides = [
 ];
 
 export default function Carousel() {
-    const [current, setCurrent] = useState(0);
+    const { currentSlide, setCurrentSlide } = useCarousel();
+    const [scrollDarkness, setScrollDarkness] = useState(0);
 
     const nextSlide = useCallback(() => {
-        setCurrent((prev) => (prev === slides.length - 1 ? 0 : prev + 1));
-    }, []);
+        setCurrentSlide(currentSlide === slides.length - 1 ? 0 : currentSlide + 1);
+    }, [currentSlide, setCurrentSlide]);
 
     const prevSlide = () => {
-        setCurrent((prev) => (prev === 0 ? slides.length - 1 : prev - 1));
+        setCurrentSlide(currentSlide === 0 ? slides.length - 1 : currentSlide - 1);
     };
 
+    // Auto-advance carousel
     useEffect(() => {
         const timer = setInterval(() => {
             nextSlide();
@@ -74,12 +77,25 @@ export default function Carousel() {
         return () => clearInterval(timer);
     }, [nextSlide]);
 
+    // Scroll-based darkening effect
+    useEffect(() => {
+        const handleScroll = () => {
+            const scrollY = window.scrollY;
+            // Darken from 0 to 1 over 500px of scroll
+            const darkness = Math.min(scrollY / 500, 1);
+            setScrollDarkness(darkness);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
     return (
         <div className={styles.carouselContainer}>
             {slides.map((slide, index) => (
                 <div
                     key={slide.id}
-                    className={`${styles.slide} ${index === current ? styles.active : ''}`}
+                    className={`${styles.slide} ${index === currentSlide ? styles.active : ''}`}
                 >
                     <Image
                         src={slide.image}
@@ -95,6 +111,12 @@ export default function Carousel() {
                 </div>
             ))}
 
+            {/* Scroll-based darkening overlay */}
+            <div
+                className={styles.scrollOverlay}
+                style={{ opacity: scrollDarkness }}
+            />
+
             <div className={styles.controls}>
                 <button onClick={prevSlide} className={styles.controlBtn} aria-label="Anterior">
                     <ChevronLeft size={24} />
@@ -108,8 +130,8 @@ export default function Carousel() {
                 {slides.map((_, index) => (
                     <div
                         key={index}
-                        className={`${styles.indicator} ${index === current ? styles.active : ''}`}
-                        onClick={() => setCurrent(index)}
+                        className={`${styles.indicator} ${index === currentSlide ? styles.active : ''}`}
+                        onClick={() => setCurrentSlide(index)}
                     />
                 ))}
             </div>

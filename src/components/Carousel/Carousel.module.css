@@ -1,6 +1,7 @@
 .carouselContainer {
     width: 100%;
-    height: 500px; /* Reducido para mejorar visualización */
+    height: 500px;
+    /* Reducido para mejorar visualización */
     position: relative;
     overflow: hidden;
     background-color: #000;
@@ -15,7 +16,8 @@
     opacity: 0;
     transition: opacity 0.8s ease-in-out;
     display: flex;
-    align-items: flex-end; /* Texto abajo */
+    align-items: flex-end;
+    /* Texto abajo */
 }
 
 .slide.active {
@@ -34,7 +36,7 @@
 }
 
 .overlay {
-    background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
     width: 100%;
     padding: 3rem 2rem;
     color: white;
@@ -100,11 +102,24 @@
 .indicator {
     width: 30px;
     height: 4px;
-    background: rgba(255,255,255,0.3);
+    background: rgba(255, 255, 255, 0.3);
     cursor: pointer;
     transition: background 0.3s;
 }
 
 .indicator.active {
     background: white;
+}
+
+.scrollOverlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000000;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 5;
+    transition: opacity 0.1s ease-out;
 }
