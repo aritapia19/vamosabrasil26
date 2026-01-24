@@ -6,6 +6,15 @@ import { writeFile, mkdir } from 'fs/promises';
 import { join } from 'path';
 import { existsSync } from 'fs';
 
+// Increase body size limit for file uploads
+export const config = {
+    api: {
+        bodyParser: false, // We'll handle FormData manually
+    },
+};
+
+export const maxDuration = 60; // 60 seconds timeout for uploads
+
 export async function POST(req: Request) {
     try {
         const cookieStore = await cookies();
