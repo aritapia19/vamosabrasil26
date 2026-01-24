@@ -49,48 +49,64 @@ export async function POST(req: Request) {
 
         // Upload files to Supabase Storage
         const mediaFiles = [];
+        const errors = [];
+
         for (const file of files) {
-            const bytes = await file.arrayBuffer();
-            const buffer = Buffer.from(bytes);
+            try {
+                const bytes = await file.arrayBuffer();
+                const buffer = Buffer.from(bytes);
 
-            // Generate unique filename
-            const ext = file.name.split('.').pop();
-            const filename = `${album.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
+                // Generate unique filename
+                const ext = file.name.split('.').pop();
+                const filename = `${album.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
 
-            // Upload to Supabase Storage
-            const { data: uploadData, error: uploadError } = await supabaseServer.storage
-                .from('album-files')
-                .upload(filename, buffer, {
-                    contentType: file.type,
-                    upsert: false,
+                console.log(`Uploading file: ${file.name}, size: ${file.size}, type: ${file.type}`);
+
+                // Upload to Supabase Storage
+                const { data: uploadData, error: uploadError } = await supabaseServer.storage
+                    .from('album-files')
+                    .upload(filename, buffer, {
+                        contentType: file.type,
+                        upsert: false,
+                    });
+
+                if (uploadError) {
+                    console.error('Upload error for', file.name, ':', uploadError);
+                    errors.push({ file: file.name, error: uploadError.message });
+                    continue;
+                }
+
+                console.log('Upload successful:', uploadData.path);
+
+                // Determine file type
+                const type = file.type.startsWith('video/') ? 'video' : 'image';
+
+                // Create database record
+                const mediaFile = await prisma.mediaFile.create({
+                    data: {
+                        filename: uploadData.path,
+                        originalName: file.name,
+                        type,
+                        mimeType: file.type,
+                        albumId: album.id,
+                    },
                 });
 
-            if (uploadError) {
-                console.error('Upload error:', uploadError);
-                continue;
+                mediaFiles.push(mediaFile);
+            } catch (err) {
+                console.error('Error processing file', file.name, ':', err);
+                errors.push({ file: file.name, error: String(err) });
             }
-
-            // Determine file type
-            const type = file.type.startsWith('video/') ? 'video' : 'image';
-
-            // Create database record
-            const mediaFile = await prisma.mediaFile.create({
-                data: {
-                    filename: uploadData.path, // Store Supabase path
-                    originalName: file.name,
-                    type,
-                    mimeType: file.type,
-                    albumId: album.id,
-                },
-            });
-
-            mediaFiles.push(mediaFile);
         }
 
-        return NextResponse.json({ album, files: mediaFiles }, { status: 201 });
+        return NextResponse.json({
+            album,
+            files: mediaFiles,
+            uploadErrors: errors.length > 0 ? errors : undefined
+        }, { status: 201 });
     } catch (error) {
         console.error('Error creating album:', error);
-        return NextResponse.json({ error: 'Error al crear álbum' }, { status: 500 });
+        return NextResponse.json({ error: 'Error al crear álbum', details: String(error) }, { status: 500 });
     }
 }
 
