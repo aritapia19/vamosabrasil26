@@ -84,7 +84,7 @@
 }
 
 .logoutBtn {
-    background: transparent;
+    background: var(--primary-green);
     border: none;
     cursor: pointer;
     display: flex;
@@ -92,11 +92,12 @@
     padding: 0.5rem;
     border-radius: 50%;
     transition: all 0.3s ease;
-    filter: drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.3));
+    color: white;
 }
 
 .logoutBtn:hover {
-    background: rgba(0, 155, 58, 0.15);
+    background: #007d2f;
+    transform: scale(1.1);
 }
 
 .header.lightBg .logoutBtn:hover {
