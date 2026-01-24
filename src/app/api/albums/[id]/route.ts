@@ -2,8 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/jwt';
 import prisma from '@/lib/prisma';
-import { unlink, rm } from 'fs/promises';
-import { join } from 'path';
+import { supabaseServer } from '@/lib/supabase';
 
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
@@ -32,13 +31,21 @@ export async function GET(req: Request, { params }: { params: Promise<{ id: stri
             return NextResponse.json({ error: 'Álbum no encontrado' }, { status: 404 });
         }
 
-        // Check permissions
         const isOwner = album.userId === decoded.id;
         if (!isOwner && !album.isPublic) {
             return NextResponse.json({ error: 'No tienes permiso' }, { status: 403 });
         }
 
-        return NextResponse.json({ album, isOwner }, { status: 200 });
+        // Add public URLs to files
+        const albumWithUrls = {
+            ...album,
+            files: album.files.map(file => ({
+                ...file,
+                publicUrl: supabaseServer.storage.from('album-files').getPublicUrl(file.filename).data.publicUrl,
+            })),
+        };
+
+        return NextResponse.json({ album: albumWithUrls, isOwner }, { status: 200 });
     } catch (error) {
         console.error('Error fetching album:', error);
         return NextResponse.json({ error: 'Error al obtener álbum' }, { status: 500 });
@@ -62,6 +69,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
         const album = await prisma.album.findUnique({
             where: { id },
+            include: { files: true },
         });
 
         if (!album) {
@@ -72,12 +80,10 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
             return NextResponse.json({ error: 'No tienes permiso' }, { status: 403 });
         }
 
-        // Delete files from filesystem
-        const uploadDir = join(process.cwd(), 'public', 'uploads', 'albums', id);
-        try {
-            await rm(uploadDir, { recursive: true, force: true });
-        } catch (err) {
-            console.error('Error deleting directory:', err);
+        // Delete files from Supabase Storage
+        const filePaths = album.files.map(f => f.filename);
+        if (filePaths.length > 0) {
+            await supabaseServer.storage.from('album-files').remove(filePaths);
         }
 
         // Delete from database (cascades to files)

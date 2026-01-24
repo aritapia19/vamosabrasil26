@@ -10,6 +10,7 @@ interface MediaFile {
     originalName: string;
     type: 'image' | 'video';
     mimeType: string;
+    publicUrl?: string;
 }
 
 interface Album {
@@ -61,13 +62,6 @@ export default function PhotoGallery() {
         } catch (error) {
             console.error('Error fetching album:', error);
         }
-    };
-
-    const downloadFile = (albumId: string, filename: string, originalName: string) => {
-        const link = document.createElement('a');
-        link.href = `/uploads/albums/${albumId}/${filename}`;
-        link.download = originalName;
-        link.click();
     };
 
     const deleteFile = async (fileId: string) => {
@@ -126,9 +120,9 @@ export default function PhotoGallery() {
                             <div className={styles.thumbnail}>
                                 {album.files[0] ? (
                                     album.files[0].type === 'image' ? (
-                                        <img src={`/uploads/albums/${album.id}/${album.files[0].filename}`} alt={album.name} />
+                                        <img src={album.files[0].publicUrl} alt={album.name} />
                                     ) : (
-                                        <video src={`/uploads/albums/${album.id}/${album.files[0].filename}`} />
+                                        <video src={album.files[0].publicUrl} />
                                     )
                                 ) : (
                                     <div className={styles.emptyThumbnail}>📷</div>
@@ -166,16 +160,18 @@ export default function PhotoGallery() {
                             {selectedAlbum.files.map((file) => (
                                 <div key={file.id} className={styles.mediaItem}>
                                     {file.type === 'image' ? (
-                                        <img src={`/uploads/albums/${selectedAlbum.id}/${file.filename}`} alt={file.originalName} />
+                                        <img src={file.publicUrl} alt={file.originalName} />
                                     ) : (
                                         <video controls>
-                                            <source src={`/uploads/albums/${selectedAlbum.id}/${file.filename}`} type={file.mimeType} />
+                                            <source src={file.publicUrl} type={file.mimeType} />
                                         </video>
                                     )}
                                     <div className={styles.mediaActions}>
-                                        <button onClick={() => downloadFile(selectedAlbum.id, file.filename, file.originalName)}>
-                                            <Download size={16} /> Descargar
-                                        </button>
+                                        <a href={file.publicUrl} download={file.originalName} target="_blank" rel="noopener noreferrer">
+                                            <button>
+                                                <Download size={16} /> Descargar
+                                            </button>
+                                        </a>
                                         {isOwner && (
                                             <button onClick={() => deleteFile(file.id)}>
                                                 <Trash2 size={16} /> Eliminar

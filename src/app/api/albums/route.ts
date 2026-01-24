@@ -2,18 +2,16 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/jwt';
 import prisma from '@/lib/prisma';
-import { writeFile, mkdir } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
+import { supabaseServer } from '@/lib/supabase';
 
 // Increase body size limit for file uploads
 export const config = {
     api: {
-        bodyParser: false, // We'll handle FormData manually
+        bodyParser: false,
     },
 };
 
-export const maxDuration = 60; // 60 seconds timeout for uploads
+export const maxDuration = 60;
 
 export async function POST(req: Request) {
     try {
@@ -49,13 +47,7 @@ export async function POST(req: Request) {
             },
         });
 
-        // Create upload directory
-        const uploadDir = join(process.cwd(), 'public', 'uploads', 'albums', album.id);
-        if (!existsSync(uploadDir)) {
-            await mkdir(uploadDir, { recursive: true });
-        }
-
-        // Process files
+        // Upload files to Supabase Storage
         const mediaFiles = [];
         for (const file of files) {
             const bytes = await file.arrayBuffer();
@@ -63,10 +55,20 @@ export async function POST(req: Request) {
 
             // Generate unique filename
             const ext = file.name.split('.').pop();
-            const filename = `${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
-            const filepath = join(uploadDir, filename);
+            const filename = `${album.id}/${Date.now()}-${Math.random().toString(36).substring(7)}.${ext}`;
 
-            await writeFile(filepath, buffer);
+            // Upload to Supabase Storage
+            const { data: uploadData, error: uploadError } = await supabaseServer.storage
+                .from('album-files')
+                .upload(filename, buffer, {
+                    contentType: file.type,
+                    upsert: false,
+                });
+
+            if (uploadError) {
+                console.error('Upload error:', uploadError);
+                continue;
+            }
 
             // Determine file type
             const type = file.type.startsWith('video/') ? 'video' : 'image';
@@ -74,7 +76,7 @@ export async function POST(req: Request) {
             // Create database record
             const mediaFile = await prisma.mediaFile.create({
                 data: {
-                    filename,
+                    filename: uploadData.path, // Store Supabase path
                     originalName: file.name,
                     type,
                     mimeType: file.type,
@@ -107,22 +109,20 @@ export async function GET(req: Request) {
         }
 
         const { searchParams } = new URL(req.url);
-        const view = searchParams.get('view'); // 'own' or 'public'
+        const view = searchParams.get('view');
 
         let albums;
         if (view === 'public') {
-            // Get all public albums from all users
             albums = await prisma.album.findMany({
                 where: { isPublic: true },
                 include: {
                     user: { select: { name: true, email: true } },
-                    files: { take: 1 }, // Get first file as thumbnail
+                    files: { take: 1 },
                     _count: { select: { files: true } },
                 },
                 orderBy: { createdAt: 'desc' },
             });
         } else {
-            // Get user's own albums
             albums = await prisma.album.findMany({
                 where: { userId: decoded.id as string },
                 include: {
@@ -133,7 +133,16 @@ export async function GET(req: Request) {
             });
         }
 
-        return NextResponse.json({ albums }, { status: 200 });
+        // Add public URLs to files
+        const albumsWithUrls = albums.map(album => ({
+            ...album,
+            files: album.files.map(file => ({
+                ...file,
+                publicUrl: supabaseServer.storage.from('album-files').getPublicUrl(file.filename).data.publicUrl,
+            })),
+        }));
+
+        return NextResponse.json({ albums: albumsWithUrls }, { status: 200 });
     } catch (error) {
         console.error('Error fetching albums:', error);
         return NextResponse.json({ error: 'Error al obtener álbumes' }, { status: 500 });

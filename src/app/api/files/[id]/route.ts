@@ -2,8 +2,7 @@ import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { verifyToken } from '@/lib/jwt';
 import prisma from '@/lib/prisma';
-import { unlink } from 'fs/promises';
-import { join } from 'path';
+import { supabaseServer } from '@/lib/supabase';
 
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
@@ -33,13 +32,8 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
             return NextResponse.json({ error: 'No tienes permiso' }, { status: 403 });
         }
 
-        // Delete from filesystem
-        const filepath = join(process.cwd(), 'public', 'uploads', 'albums', file.albumId, file.filename);
-        try {
-            await unlink(filepath);
-        } catch (err) {
-            console.error('Error deleting file:', err);
-        }
+        // Delete from Supabase Storage
+        await supabaseServer.storage.from('album-files').remove([file.filename]);
 
         // Delete from database
         await prisma.mediaFile.delete({ where: { id } });
