@@ -13,33 +13,9 @@ import styles from './page.module.css';
 
 export default function Home() {
   const router = useRouter();
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
+  // La validación de sesión ahora la maneja el middleware.ts
+  // No necesitamos verificar la cookie del lado del cliente (que además fallaba por ser HttpOnly)
 
-  useEffect(() => {
-    // Check for token on client side
-    const getCookie = (name: string) => {
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${name}=`);
-      if (parts.length === 2) return parts.pop()?.split(';').shift();
-    };
-
-    const token = getCookie('token');
-    if (!token) {
-      router.push('/login');
-    } else {
-      setIsAuthenticated(true);
-    }
-    setIsLoading(false);
-  }, [router]);
-
-  if (isLoading) {
-    return null; // or a loading spinner
-  }
-
-  if (!isAuthenticated) {
-    return null;
-  }
 
   return (
     <CarouselProvider>
