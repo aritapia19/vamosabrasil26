@@ -1,11 +1,21 @@
 .container {
-    background: linear-gradient(135deg, var(--primary-green), #007d2f);
+    background:
+        radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(135deg, var(--primary-green), #007d2f);
+    background-size: 20px 20px, 100% 100%;
     color: white;
     border-radius: 20px;
     padding: 1.5rem;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
     border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+.container:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1);
+}
+
 
 .header {
     display: flex;
@@ -21,7 +31,7 @@
 }
 
 .icon {
-    color: var(--secondary-yellow);
+    color: white;
 }
 
 .title {
@@ -84,7 +94,8 @@
     position: relative;
     display: flex;
     align-items: center;
-    background: rgba(0, 0, 0, 0.2); /* Verde distinto/oscuro */
+    background: rgba(0, 0, 0, 0.2);
+    /* Verde distinto/oscuro */
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
@@ -114,7 +125,8 @@
 }
 
 .resultBox {
-    background: rgba(0, 0, 0, 0.2); /* Verde distinto/oscuro */
+    background: rgba(0, 0, 0, 0.2);
+    /* Verde distinto/oscuro */
     padding: 12px;
     border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);

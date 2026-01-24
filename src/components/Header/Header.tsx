@@ -10,9 +10,23 @@ import { useEffect, useState } from 'react';
 
 export default function Header() {
     const router = useRouter();
-    const { currentImage, imageBrightness } = useCarousel();
+    const { currentImage } = useCarousel(); // Mantenemos para otros usos si fuera necesario, pero el fondo ahora es lógico
     const [userName, setUserName] = useState('Usuario');
     const [hasToken, setHasToken] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (window.scrollY > 10) {
+                setIsScrolled(true);
+            } else {
+                setIsScrolled(false);
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     useEffect(() => {
         // Get token on client side
@@ -45,12 +59,9 @@ export default function Header() {
 
     return (
         <header
-            className={`${styles.header} ${imageBrightness === 'light' ? styles.lightBg : styles.darkBg}`}
-            style={{
-                backgroundImage: `url(${currentImage})`,
-            }}
+            className={`${styles.header} ${isScrolled ? styles.scrolled : styles.initial}`}
         >
-            <div className={styles.headerBackdrop} />
+            {/* Backdrop removido o ajustado por CSS si es necesario, la lógica ahora es color sólido vs transparente */}
             <div className={styles.nav}>
                 <div className={styles.left}>
                     <h1 className={styles.logo}>BUZIOS</h1>

@@ -1,70 +1,33 @@
 .header {
     color: white;
     padding: 0.75rem 0;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    transition: background-image 0.8s ease-in-out;
-}
-
-.headerBackdrop {
-    position: absolute;
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    backdrop-filter: blur(12px) saturate(150%);
-    -webkit-backdrop-filter: blur(12px) saturate(150%);
-    background: rgba(0, 0, 0, 0.4);
-    z-index: -1;
+    z-index: 100;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: background-color 0.4s ease-in-out, backdrop-filter 0.4s ease;
 }
 
-/* Light background - dark text */
-.header.lightBg {
-    color: #1a1a1a;
-    border-bottom-color: rgba(0, 0, 0, 0.1);
-}
-
-.header.lightBg .headerBackdrop {
-    background: rgba(255, 255, 255, 0.3);
-}
-
-.header.lightBg .logo,
-.header.lightBg .userInfo,
-.header.lightBg .logoutBtn {
-    color: #1a1a1a;
-}
-
-.header.lightBg .countdownWrapper {
-    border-left-color: rgba(0, 0, 0, 0.2);
-}
-
-/* Dark background - light text */
-.header.darkBg {
-    color: white;
+.initial {
+    background-color: #000000;
     border-bottom-color: rgba(255, 255, 255, 0.1);
 }
 
-.header.darkBg .headerBackdrop {
-    background: rgba(0, 0, 0, 0.5);
+.scrolled {
+    background-color: transparent;
+    border-bottom-color: transparent;
+    /* Opcional: si quieren que sea "transparente" pero legible, tal vez un poco de blur? 
+       Si el usuario dijo LITERALMENTE transparente, esto es lo que piden. 
+       Añadiré un shadow sutil en scroll para separar si hay contenido claro abajo */
 }
 
-.header.darkBg .logo,
-.header.darkBg .userInfo {
-    color: white;
+.headerBackdrop {
+    display: none;
+    /* Ya no usamos el backdrop blur absoluto antiguo */
 }
 
-.header.darkBg .logoutBtn {
-    color: #009b3a;
-}
-
-.header.darkBg .countdownWrapper {
-    border-left-color: rgba(255, 255, 255, 0.2);
-}
 
 .nav {
     display: flex;
