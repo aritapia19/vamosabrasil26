@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { Upload, X, Image as ImageIcon, Video } from 'lucide-react';
+import imageCompression from 'browser-image-compression';
 import styles from './AlbumUpload.module.css';
 
 interface AlbumUploadProps {
@@ -15,6 +16,7 @@ export default function AlbumUpload({ onSuccess }: AlbumUploadProps) {
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
     const [uploading, setUploading] = useState(false);
+    const [compressing, setCompressing] = useState(false);
     const [progress, setProgress] = useState(0);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -31,22 +33,46 @@ export default function AlbumUpload({ onSuccess }: AlbumUploadProps) {
         addFiles(files);
     };
 
-    const addFiles = (files: File[]) => {
+    const addFiles = async (files: File[]) => {
         // Filter valid files
         const validFiles = files.filter(f =>
             f.type.startsWith('image/') || f.type.startsWith('video/')
         );
 
-        setSelectedFiles(prev => [...prev, ...validFiles]);
+        setCompressing(true);
+        const processedFiles: File[] = [];
 
-        // Create previews
-        validFiles.forEach(file => {
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                setPreviews(prev => [...prev, reader.result as string]);
-            };
-            reader.readAsDataURL(file);
-        });
+        for (const file of validFiles) {
+            try {
+                let processedFile = file;
+
+                // Compress images only (not videos)
+                if (file.type.startsWith('image/')) {
+                    const options = {
+                        maxSizeMB: 0.8, // Max 800KB per image
+                        maxWidthOrHeight: 1920,
+                        useWebWorker: true,
+                    };
+                    processedFile = await imageCompression(file, options);
+                    console.log(`Compressed ${file.name}: ${(file.size / 1024 / 1024).toFixed(2)}MB → ${(processedFile.size / 1024 / 1024).toFixed(2)}MB`);
+                }
+
+                processedFiles.push(processedFile);
+
+                // Create preview
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    setPreviews(prev => [...prev, reader.result as string]);
+                };
+                reader.readAsDataURL(processedFile);
+            } catch (error) {
+                console.error('Error processing file:', error);
+                processedFiles.push(file); // Use original if compression fails
+            }
+        }
+
+        setSelectedFiles(prev => [...prev, ...processedFiles]);
+        setCompressing(false);
     };
 
     const removeFile = (index: number) => {
@@ -81,7 +107,12 @@ export default function AlbumUpload({ onSuccess }: AlbumUploadProps) {
             });
 
             if (res.ok) {
-                alert('Álbum creado exitosamente');
+                const data = await res.json();
+                if (data.uploadErrors && data.uploadErrors.length > 0) {
+                    alert(`Álbum creado pero algunos archivos fallaron:\n${data.uploadErrors.map((e: any) => e.file).join('\n')}`);
+                } else {
+                    alert('Álbum creado exitosamente');
+                }
                 setName('');
                 setDescription('');
                 setIsPublic(false);
@@ -89,7 +120,8 @@ export default function AlbumUpload({ onSuccess }: AlbumUploadProps) {
                 setPreviews([]);
                 onSuccess?.();
             } else {
-                alert('Error al crear álbum');
+                const errorData = await res.json();
+                alert(`Error: ${errorData.error || 'Error al crear álbum'}`);
             }
         } catch (error) {
             console.error('Upload error:', error);
@@ -144,6 +176,9 @@ export default function AlbumUpload({ onSuccess }: AlbumUploadProps) {
                     <Upload size={48} />
                     <p>Arrastra fotos/videos o haz clic para seleccionar</p>
                     <span>Formatos: JPG, PNG, WEBP, MP4, WEBM, MOV</span>
+                    <span style={{ fontSize: '0.75rem', marginTop: '0.5rem' }}>
+                        Las imágenes se comprimen automáticamente
+                    </span>
                     <input
                         ref={fileInputRef}
                         type="file"
@@ -178,8 +213,8 @@ export default function AlbumUpload({ onSuccess }: AlbumUploadProps) {
                     </div>
                 )}
 
-                <button type="submit" className={styles.submitBtn} disabled={uploading}>
-                    {uploading ? `Subiendo... ${progress}%` : 'Crear Álbum'}
+                <button type="submit" className={styles.submitBtn} disabled={uploading || compressing}>
+                    {compressing ? 'Comprimiendo imágenes...' : (uploading ? `Subiendo... ${progress}%` : 'Crear Álbum')}
                 </button>
             </form>
         </div>
