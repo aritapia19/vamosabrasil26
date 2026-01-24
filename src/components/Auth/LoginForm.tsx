@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { LogIn, Loader2 } from 'lucide-react';
+import { Plane, Loader2 } from 'lucide-react';
 import styles from './Auth.module.css';
 
 export default function LoginForm() {
@@ -44,7 +44,7 @@ export default function LoginForm() {
         <div className={styles.authCard}>
             <div className={styles.header}>
                 <div className={styles.iconCircle}>
-                    <LogIn className={styles.icon} />
+                    <Plane className={styles.icon} />
                 </div>
                 <h2>VAMOS A BRASIL</h2>
                 {/* Texto eliminado por solicitud */}
