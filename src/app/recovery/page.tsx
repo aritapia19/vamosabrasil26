@@ -9,11 +9,33 @@ import authStyles from '@/components/Auth/Auth.module.css';
 export default function RecoveryPage() {
     const [email, setEmail] = useState('');
     const [sent, setSent] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // Simulación de envío
-        setSent(true);
+        setLoading(true);
+        setError('');
+
+        try {
+            const res = await fetch('/api/auth/recovery', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email }),
+            });
+
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || 'Error al solicitar recuperación');
+            }
+
+            setSent(true);
+        } catch (err: any) {
+            setError(err.message || 'Ocurrió un error. Intenta nuevamente.');
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -42,11 +64,14 @@ export default function RecoveryPage() {
                                 onChange={(e) => setEmail(e.target.value)}
                                 placeholder="correo@ejemplo.com"
                                 required
+                                disabled={loading}
                             />
                         </div>
 
-                        <button type="submit" className={authStyles.submitBtn}>
-                            Enviar Instrucciones
+                        {error && <div style={{ color: 'red', fontSize: '0.9rem', marginBottom: '1rem' }}>{error}</div>}
+
+                        <button type="submit" className={authStyles.submitBtn} disabled={loading}>
+                            {loading ? 'Enviando...' : 'Enviar Instrucciones'}
                         </button>
                     </form>
                 ) : (
