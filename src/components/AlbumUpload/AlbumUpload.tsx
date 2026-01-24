@@ -44,7 +44,7 @@ export default function AlbumUpload({ onSuccess }: AlbumUploadProps) {
 
         for (const file of validFiles) {
             try {
-                let processedFile = file;
+                let processedFile: File = file;
 
                 // Compress images only (not videos)
                 if (file.type.startsWith('image/')) {
@@ -53,8 +53,14 @@ export default function AlbumUpload({ onSuccess }: AlbumUploadProps) {
                         maxWidthOrHeight: 1920,
                         useWebWorker: true,
                     };
-                    processedFile = await imageCompression(file, options);
-                    console.log(`Compressed ${file.name}: ${(file.size / 1024 / 1024).toFixed(2)}MB → ${(processedFile.size / 1024 / 1024).toFixed(2)}MB`);
+                    const compressedBlob = await imageCompression(file, options);
+                    console.log(`Compressed ${file.name}: ${(file.size / 1024 / 1024).toFixed(2)}MB → ${(compressedBlob.size / 1024 / 1024).toFixed(2)}MB`);
+
+                    // Convert Blob to File with original filename
+                    processedFile = new File([compressedBlob], file.name, {
+                        type: compressedBlob.type || file.type,
+                        lastModified: Date.now(),
+                    });
                 }
 
                 processedFiles.push(processedFile);
