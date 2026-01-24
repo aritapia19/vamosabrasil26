@@ -4,8 +4,9 @@
     align-items: center;
     justify-content: center;
     padding: 1.5rem;
-    background-color: var(--gray-50);
-    background-image: radial-gradient(var(--secondary-yellow) 0.5px, transparent 0.5px);
-    background-size: 20px 20px;
+    background-color: var(--gray-800);
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.7)), url('/images/ezeiza.jpg');
+    background-size: cover;
+    background-position: center;
     background-attachment: fixed;
 }
