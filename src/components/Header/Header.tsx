@@ -29,21 +29,23 @@ export default function Header() {
     }, []);
 
     useEffect(() => {
-        // Get token on client side
-        const getCookie = (name: string) => {
-            const value = `; ${document.cookie}`;
-            const parts = value.split(`; ${name}=`);
-            if (parts.length === 2) return parts.pop()?.split(';').shift();
+        const checkAuth = async () => {
+            try {
+                const res = await fetch('/api/auth/me');
+                if (res.ok) {
+                    const data = await res.json();
+                    setHasToken(true);
+                    setUserName(data.user.name || 'Usuario');
+                } else {
+                    setHasToken(false);
+                }
+            } catch (error) {
+                console.error('Error verificando sesión:', error);
+                setHasToken(false);
+            }
         };
 
-        const token = getCookie('token');
-        if (token) {
-            setHasToken(true);
-            const decoded = verifyToken(token);
-            if (decoded && typeof decoded === 'object' && 'name' in decoded) {
-                setUserName((decoded.name as string) || 'Usuario');
-            }
-        }
+        checkAuth();
     }, []);
 
     const handleLogout = async () => {

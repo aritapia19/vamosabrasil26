@@ -133,6 +133,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
+    /* Agregado para contener el símbolo $ absoluto */
 }
 
 .resultValue {
