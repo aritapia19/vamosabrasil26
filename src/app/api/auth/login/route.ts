@@ -34,10 +34,10 @@ export async function POST(req: Request) {
             );
         }
 
-        const token = signToken({ id: user.id, email: user.email });
+        const token = signToken({ id: user.id, email: user.email, name: user.name });
 
         const response = NextResponse.json(
-            { message: 'Login exitoso', user: { id: user.id, email: user.email } },
+            { message: 'Login exitoso', user: { id: user.id, email: user.email, name: user.name } },
             { status: 200 }
         );
 
