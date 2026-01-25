@@ -44,11 +44,12 @@ export default function Home() {
             <FlightManager />
           </div>
 
-          {/* Photo Gallery Section */}
+          {/* Photo Gallery Section - Temporarily hidden
           <div className={styles.wideSection}>
             <AlbumUpload onSuccess={() => setRefreshGallery(prev => prev + 1)} />
             <PhotoGallery key={refreshGallery} />
           </div>
+          */}
         </div>
 
         <footer className={styles.footer}>

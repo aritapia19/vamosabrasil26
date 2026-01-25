@@ -107,6 +107,47 @@
     border-color: var(--secondary-yellow);
 }
 
+.flightSearchWrapper {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.searchBtn {
+    background: var(--secondary-yellow);
+    color: var(--dark-blue);
+    border: none;
+    border-radius: 8px;
+    width: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.searchBtn:hover {
+    background: #e6c900;
+}
+
+.searchBtn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .submitBtn {
     background: var(--secondary-yellow);
     color: var(--dark-blue);

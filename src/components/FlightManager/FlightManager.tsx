@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Plane, Calendar, Users, Plus, X } from 'lucide-react';
+import { Plane, Calendar, Users, Plus, X, Search, Loader2 } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 import styles from './FlightManager.module.css';
@@ -25,6 +25,7 @@ export default function FlightManager() {
     const [bookings, setBookings] = useState<FlightBooking[]>([]);
     const [showForm, setShowForm] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [searching, setSearching] = useState(false);
     const [formData, setFormData] = useState({
         pnrCode: '',
         flightNumber: '',
@@ -38,6 +39,41 @@ export default function FlightManager() {
     });
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+
+    const searchFlight = async () => {
+        if (!formData.flightNumber) return;
+
+        setSearching(true);
+        setError('');
+
+        try {
+            // Remove spaces for API (e.g. G3 1234 -> G31234)
+            const cleanFlightNum = formData.flightNumber.replace(/\s/g, '');
+            const res = await fetch(`/api/flight/lookup?flight_iata=${cleanFlightNum}`);
+            const data = await res.json();
+
+            if (!res.ok) {
+                throw new Error(data.error || 'Vuelo no encontrado');
+            }
+
+            // Auto-fill form
+            setFormData(prev => ({
+                ...prev,
+                origin: `${data.origin} (${data.originIata})`,
+                destination: `${data.destination} (${data.destinationIata})`,
+                departureDate: data.departureDate,
+                departureTime: data.departureTime,
+                // If it's a return flight logic is complex, for now we just fill departures
+            }));
+
+            setSuccess('¡Datos del vuelo encontrados!');
+        } catch (err: any) {
+            console.error(err);
+            setError(err.message || 'Error al buscar vuelo. Intenta ingresarlo manualmente.');
+        } finally {
+            setSearching(false);
+        }
+    };
 
     const fetchBookings = async () => {
         try {
@@ -100,7 +136,7 @@ export default function FlightManager() {
                 <div className={styles.titleGroup}>
                     <Plane className={styles.icon} />
                     <div>
-                        <h3 className={styles.title}>Mis Vuelos Gol</h3>
+                        <h3 className={styles.title}>Mi viaje en avión</h3>
                         <p className={styles.subtitle}>Gestiona tus reservas</p>
                     </div>
                 </div>
@@ -129,13 +165,23 @@ export default function FlightManager() {
                         </div>
 
                         <div className={styles.inputGroup}>
-                            <label>Número de Vuelo</label>
-                            <input
-                                type="text"
-                                value={formData.flightNumber}
-                                onChange={(e) => setFormData({ ...formData, flightNumber: e.target.value })}
-                                placeholder="G3 1234"
-                            />
+                            <label>Número de Vuelo (ej: G3 7654)</label>
+                            <div className={styles.flightSearchWrapper}>
+                                <input
+                                    type="text"
+                                    value={formData.flightNumber}
+                                    onChange={(e) => setFormData({ ...formData, flightNumber: e.target.value.toUpperCase() })}
+                                    placeholder="G37654"
+                                />
+                                <button
+                                    type="button"
+                                    className={styles.searchBtn}
+                                    onClick={searchFlight}
+                                    disabled={searching || !formData.flightNumber}
+                                >
+                                    {searching ? <Loader2 className={styles.spin} size={16} /> : <Search size={16} />}
+                                </button>
+                            </div>
                         </div>
 
                         <div className={styles.inputGroup}>
