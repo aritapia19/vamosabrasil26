@@ -97,45 +97,75 @@ export default function AlbumUpload({ onSuccess }: AlbumUploadProps) {
         setUploading(true);
         setProgress(0);
 
-        const formData = new FormData();
-        formData.append('name', name);
-        if (description) formData.append('description', description);
-        formData.append('isPublic', isPublic.toString());
-
-        selectedFiles.forEach(file => {
-            formData.append('files', file);
-        });
-
+        // 1. Create Album first
+        let albumId: string;
         try {
+            const formData = new FormData();
+            formData.append('name', name);
+            if (description) formData.append('description', description);
+            formData.append('isPublic', isPublic.toString());
+
             const res = await fetch('/api/albums', {
                 method: 'POST',
                 body: formData,
             });
 
-            if (res.ok) {
-                const data = await res.json();
-                if (data.uploadErrors && data.uploadErrors.length > 0) {
-                    alert(`Álbum creado pero algunos archivos fallaron:\n${data.uploadErrors.map((e: any) => e.file).join('\n')}`);
-                } else {
-                    alert('Álbum creado exitosamente');
-                }
-                setName('');
-                setDescription('');
-                setIsPublic(false);
-                setSelectedFiles([]);
-                setPreviews([]);
-                onSuccess?.();
-            } else {
+            if (!res.ok) {
                 const errorData = await res.json();
-                alert(`Error: ${errorData.error || 'Error al crear álbum'}`);
+                throw new Error(errorData.error || 'Error al crear álbum');
             }
+
+            const data = await res.json();
+            albumId = data.album.id;
         } catch (error) {
-            console.error('Upload error:', error);
-            alert('Error al subir archivos');
-        } finally {
+            console.error('Error creating album:', error);
+            alert('Error al crear el álbum. No se subieron archivos.');
             setUploading(false);
-            setProgress(0);
+            return;
         }
+
+        // 2. Upload files one by one
+        const failedFiles: string[] = [];
+        let completed = 0;
+        const total = selectedFiles.length;
+
+        for (const file of selectedFiles) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+
+                const res = await fetch(`/api/albums/${albumId}/upload`, {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (!res.ok) {
+                    throw new Error('Upload failed');
+                }
+
+                completed++;
+                setProgress(Math.round((completed / total) * 100));
+            } catch (error) {
+                console.error(`Error uploading ${file.name}:`, error);
+                failedFiles.push(file.name);
+            }
+        }
+
+        setUploading(false);
+        setProgress(0);
+
+        if (failedFiles.length > 0) {
+            alert(`Álbum creado pero fallaron ${failedFiles.length} archivos:\n${failedFiles.join('\n')}`);
+        } else {
+            alert('¡Álbum creado y archivos subidos exitosamente!');
+        }
+
+        setName('');
+        setDescription('');
+        setIsPublic(false);
+        setSelectedFiles([]);
+        setPreviews([]);
+        onSuccess?.();
     };
 
     return (

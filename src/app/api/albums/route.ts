@@ -33,8 +33,8 @@ export async function POST(req: Request) {
         const isPublic = formData.get('isPublic') === 'true';
         const files = formData.getAll('files') as File[];
 
-        if (!name || files.length === 0) {
-            return NextResponse.json({ error: 'Nombre y archivos son requeridos' }, { status: 400 });
+        if (!name) {
+            return NextResponse.json({ error: 'Nombre es requerido' }, { status: 400 });
         }
 
         // Create album
@@ -46,6 +46,11 @@ export async function POST(req: Request) {
                 userId: decoded.id as string,
             },
         });
+
+        // If no files, return early
+        if (files.length === 0) {
+            return NextResponse.json({ album, files: [] }, { status: 201 });
+        }
 
         // Upload files to Supabase Storage
         const mediaFiles = [];
