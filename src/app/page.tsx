@@ -52,7 +52,7 @@ export default function Home() {
         </div>
 
         <footer className={styles.footer}>
-          <p>© 2026 Vamos a Brasil - Hecho con ❤️ para la aventura</p>
+          <p>© 2026 Vamos a Brasil - Viaje de toda la familia - Hecho por Ari ❤️</p>
         </footer>
       </main>
     </CarouselProvider>

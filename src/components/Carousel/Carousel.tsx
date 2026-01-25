@@ -8,9 +8,27 @@ import styles from './Carousel.module.css';
 
 const slides = [
     {
+        id: 6,
+        image: '/images/carousel/06_noche.jpg',
+        title: 'Noche en Búzios',
+        description: 'Vive la magia de Rua das Pedras, gastronomía, música y diversión nocturna.'
+    },
+    {
+        id: 8,
+        image: '/images/carousel/08_rio.jpg',
+        title: 'Rio de Janeiro',
+        description: 'La Ciudad Maravillosa te espera con sus iconos mundiales y energía única.'
+    },
+    {
+        id: 4,
+        image: '/images/carousel/04_playa.jpg',
+        title: 'Playas',
+        description: 'Descubre las playas paradisíacas de arena blanca y aguas cristalinas de Búzios.'
+    },
+    {
         id: 1,
         image: '/images/carousel/01_gol.jpg',
-        title: 'GOL',
+        title: 'GOL AIRLINES',
         description: 'Vuela con comodidad y seguridad en nuestra aerolínea asociada para comenzar tu aventura.'
     },
     {
@@ -26,34 +44,16 @@ const slides = [
         description: 'Tu hogar lejos de casa. Confort, ubicación ideal y la mejor atención en Búzios.'
     },
     {
-        id: 4,
-        image: '/images/carousel/04_playa.jpg',
-        title: 'Playas',
-        description: 'Descubre las playas paradisíacas de arena blanca y aguas cristalinas de Búzios.'
-    },
-    {
         id: 5,
         image: '/images/carousel/05_barco.jpg',
         title: 'Barco',
         description: 'Excursiones inolvidables navegando por la costa y conociendo las mejores vistas.'
     },
     {
-        id: 6,
-        image: '/images/carousel/06_noche.jpg',
-        title: 'Noche en Búzios',
-        description: 'Vive la magia de Rua das Pedras, gastronomía, música y diversión nocturna.'
-    },
-    {
         id: 7,
         image: '/images/carousel/07_cabofrio.JPG',
         title: 'Arraial do Cabo',
         description: 'Una escapada imprescindible al "Caribe Brasileño", naturaleza en estado puro.'
-    },
-    {
-        id: 8,
-        image: '/images/carousel/08_rio.jpg',
-        title: 'Rio de Janeiro',
-        description: 'La Ciudad Maravillosa te espera con sus iconos mundiales y energía única.'
     }
 ];
 

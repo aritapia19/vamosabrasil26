@@ -92,10 +92,10 @@
     position: relative;
     display: flex;
     align-items: center;
-    background: rgba(0, 0, 0, 0.2);
-    /* Verde distinto/oscuro */
+    background: rgba(255, 255, 255, 0.15);
+    /* Gris/vidrio como el clima */
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .inputWrapper input {
@@ -123,11 +123,11 @@
 }
 
 .resultBox {
-    background: rgba(0, 0, 0, 0.2);
-    /* Verde distinto/oscuro */
+    background: rgba(255, 255, 255, 0.15);
+    /* Gris/vidrio como el clima */
     padding: 12px;
     border-radius: 8px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     display: flex;
     justify-content: space-between;
     align-items: center;
