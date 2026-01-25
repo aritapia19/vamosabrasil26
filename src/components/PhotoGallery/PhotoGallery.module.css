@@ -122,6 +122,65 @@
     overflow-y: auto;
 }
 
+.modalContent {
+    background: #1a1a1a;
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 90vw;
+    width: 1000px;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    border: 1px solid #333;
+}
+
+.closeModal {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: none;
+    border: none;
+    color: #888;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.closeModal:hover {
+    color: #fff;
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-right: 2rem;
+}
+
+.modalHeader h2 {
+    margin: 0;
+    font-size: 1.8rem;
+}
+
+.addPhotosBtn {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #0070f3;
+    color: white;
+    border: none;
+    padding: 0.6rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background 0.2s;
+}
+
+.addPhotosBtn:hover {
+    background: #0060df;
+}
+
 .lightboxContent {
     background: linear-gradient(135deg, var(--primary-green), #007d2f);
     border-radius: 20px;

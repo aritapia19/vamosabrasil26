@@ -1,8 +1,9 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Camera, Users, Lock, Download, Trash2, X } from 'lucide-react';
+import { Camera, Users, Lock, Download, Trash2, X, Plus } from 'lucide-react';
 import styles from './PhotoGallery.module.css';
+import PhotosUpload from './PhotosUpload';
 
 interface MediaFile {
     id: string;
@@ -30,6 +31,7 @@ export default function PhotoGallery() {
     const [albums, setAlbums] = useState<Album[]>([]);
     const [selectedAlbum, setSelectedAlbum] = useState<Album | null>(null);
     const [isOwner, setIsOwner] = useState(false);
+    const [showUpload, setShowUpload] = useState(false);
     const [loading, setLoading] = useState(false);
 
     const fetchAlbums = async () => {
@@ -145,12 +147,33 @@ export default function PhotoGallery() {
 
             {selectedAlbum && (
                 <div className={styles.lightbox} onClick={() => setSelectedAlbum(null)}>
-                    <div className={styles.lightboxContent} onClick={(e) => e.stopPropagation()}>
-                        <button className={styles.closeBtn} onClick={() => setSelectedAlbum(null)}>
-                            <X />
+                    <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+                        <button className={styles.closeModal} onClick={() => setSelectedAlbum(null)}>
+                            <X size={24} />
                         </button>
-                        <h2>{selectedAlbum.name}</h2>
+
+                        <div className={styles.modalHeader}>
+                            <h2>{selectedAlbum.name}</h2>
+                            {isOwner && !showUpload && (
+                                <button className={styles.addPhotosBtn} onClick={() => setShowUpload(true)}>
+                                    <Plus size={18} /> Agregar Fotos
+                                </button>
+                            )}
+                        </div>
+
                         {selectedAlbum.description && <p>{selectedAlbum.description}</p>}
+
+                        {showUpload && (
+                            <PhotosUpload
+                                albumId={selectedAlbum.id}
+                                onSuccess={() => {
+                                    setShowUpload(false);
+                                    openAlbum(selectedAlbum.id); // Refresh
+                                }}
+                                onCancel={() => setShowUpload(false)}
+                            />
+                        )}
+
                         {isOwner && (
                             <button className={styles.deleteAlbumBtn} onClick={() => deleteAlbum(selectedAlbum.id)}>
                                 <Trash2 size={16} /> Eliminar Álbum
