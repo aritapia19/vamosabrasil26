@@ -12,7 +12,7 @@ interface AlbumUploadProps {
 export default function AlbumUpload({ onSuccess }: AlbumUploadProps) {
     const [name, setName] = useState('');
     const [description, setDescription] = useState('');
-    const [isPublic, setIsPublic] = useState(false);
+    const [isPublic, setIsPublic] = useState(true); // Default to public
     const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
     const [previews, setPreviews] = useState<string[]>([]);
     const [uploading, setUploading] = useState(false);
@@ -89,8 +89,8 @@ export default function AlbumUpload({ onSuccess }: AlbumUploadProps) {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!name || selectedFiles.length === 0) {
-            alert('Nombre y archivos son requeridos');
+        if (!name) {
+            alert('El nombre del álbum es requerido');
             return;
         }
 
@@ -103,7 +103,7 @@ export default function AlbumUpload({ onSuccess }: AlbumUploadProps) {
             const formData = new FormData();
             formData.append('name', name);
             if (description) formData.append('description', description);
-            formData.append('isPublic', isPublic.toString());
+            formData.append('isPublic', 'true'); // Always public
 
             const res = await fetch('/api/albums', {
                 method: 'POST',
@@ -119,7 +119,20 @@ export default function AlbumUpload({ onSuccess }: AlbumUploadProps) {
             albumId = data.album.id;
         } catch (error) {
             console.error('Error creating album:', error);
-            alert('Error al crear el álbum. No se subieron archivos.');
+            alert('Error al crear el álbum.');
+            setUploading(false);
+            return;
+        }
+
+        // If no files, we are done
+        if (selectedFiles.length === 0) {
+            alert('¡Álbum creado exitosamente (sin fotos)!');
+            setName('');
+            setDescription('');
+            setIsPublic(true);
+            setSelectedFiles([]);
+            setPreviews([]);
+            onSuccess?.();
             setUploading(false);
             return;
         }
@@ -193,15 +206,7 @@ export default function AlbumUpload({ onSuccess }: AlbumUploadProps) {
                     />
                 </div>
 
-                <div className={styles.checkboxGroup}>
-                    <input
-                        type="checkbox"
-                        id="isPublic"
-                        checked={isPublic}
-                        onChange={(e) => setIsPublic(e.target.checked)}
-                    />
-                    <label htmlFor="isPublic">Hacer público (otros usuarios pueden ver)</label>
-                </div>
+
 
                 <div
                     className={styles.dropZone}
